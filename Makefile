@@ -8,7 +8,7 @@
 # Use for ALSA
 #SOUND=-DSOUND -DALSA -lasound
 
-CC=g++
+CC=c++ -std=c++11 
 COMP=$(CC) $(SOUND) -I/usr/X11/include -Wall -pedantic -g -O2 -c $<
 BIN=digg
 

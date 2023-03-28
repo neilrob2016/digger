@@ -1,10 +1,15 @@
 #include "globals.h"
 
-#define MAX_ARM_LEN    30
+#define MAX_ARM_LEN 30
 
 static en_colours start_col[6] = 
 { 
-	BLACK2, BLACK3, BLACK4, BLACK5, BLACK6, BLACK7 
+	COL_BLACK2,
+	COL_BLACK3,
+	COL_BLACK4,
+	COL_BLACK5,
+	COL_BLACK6,
+	COL_BLACK7 
 };
 
 
@@ -27,8 +32,8 @@ void cl_spiky::activate()
 	cl_tunnel *tun;
 	int tnum;
 	int cnt;
-	int o;
 	int len;
+	int o;
 
 	cl_enemy::activate();
 
@@ -73,11 +78,12 @@ void cl_spiky::activate()
 				x = tun->min_x + (random() % len) + 1;
 				y = tun->y1;
 			}
-			FOR_ALL_OBJECTS(o)
+			for(o=0;o < MAX_OBJECTS;++o)
 			{
-				if (objects[o]->type == TYPE_BOULDER &&
-				    objects[o]->stage != STAGE_INACTIVE &&
-				    distToObject(objects[o]) < objects[o]->radius)
+				cl_object *obj = objects[o];
+				if (obj->type == TYPE_BOULDER &&
+				    obj->stage != STAGE_INACTIVE &&
+				    distToObject(obj) < obj->radius)
 					break;
 			}
 		} while(++cnt < 10 && o != MAX_OBJECTS);
@@ -147,7 +153,7 @@ void cl_spiky::setArmsForRun()
 {
 	for(int i=0;i < SPIKY_ARMS;++i)
 	{
-		arm[i].col = random() % GREEN2;
+		arm[i].col = random() % COL_GREEN2;
 
 		do
 		{
@@ -389,7 +395,7 @@ void cl_spiky::draw()
 		ys = y + arm[i].len * COS(arm[i].angle) * ysize;
 
 		drawLine(
-			player->freeze_timer ? MEDIUM_BLUE : (int)arm[i].col,
+			player->freeze_timer ? COL_MEDIUM_BLUE : (int)arm[i].col,
 			3,x,y,xs,ys);
 
 		arm[i].len += arm[i].len_add;
@@ -410,9 +416,9 @@ void cl_spiky::draw()
 
 		if (stage == STAGE_RUN)
 		{
-			if (arm[i].col <= 0) arm[i].col = GREEN2;
+			if (arm[i].col <= 0) arm[i].col = COL_GREEN2;
 			else
-			if (arm[i].col >= GREEN2) arm[i].col = 0;
+			if (arm[i].col >= COL_GREEN2) arm[i].col = COL_GREEN;
 		}
 	}
 }

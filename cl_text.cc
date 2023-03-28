@@ -29,30 +29,25 @@ void cl_text::reset(cl_object *obj, int num)
 
 	switch(type)
 	{
-	case GOT_SPIKY:
+	case TXT_GOT_SPIKY:
 		text = "GOT SPIKY!";
 		cnt = random() % 10; // Random starting delay
 		break;
-
-	case BONUS_SCORE:
+	case TXT_BONUS_SCORE:
 		sprintf(mesg,"BONUS %03d!",num);
 		text = mesg;
 		cnt = random() % 10; 
 		break;
-
-	case INVISIBILITY_POWERUP:
+	case TXT_INVISIBILITY_POWERUP:
 		text = "INVISIBILITY!";
 		cnt = 0;
 		break;		
-
-	case SUPERBALL_POWERUP:
+	case TXT_SUPERBALL_POWERUP:
 		text = "SUPERBALL!";
 		break;		
-		
-	case FREEZE_POWERUP:
+	case TXT_FREEZE_POWERUP:
 		text = "FREEZE!";
 		break;
-
 	default:
 		assert(0);
 	}
@@ -69,7 +64,7 @@ void cl_text::reset(bool run)
 	y_scale = 1;
 	x_scale_add = 0;
 	y_scale_add = 0;
-	col = WHITE;
+	col = COL_WHITE;
 	col_add = 0;
 	thick = 2;
 	thick_add = 0;
@@ -81,20 +76,19 @@ void cl_text::reset(bool run)
 
 	switch(type)
 	{
-	case PAUSED:
+	case TXT_PAUSED:
 		text = "PAUSED";
 		x = SCR_MID - 180,
 		y = SCR_MID - 10;
-		col = GREEN;
+		col = COL_GREEN;
 		col_add = 0.1;
 		x_scale = 5;
 		y_scale = 3;
 		y_scale_add = 0.1;
 		thick_add = 0.5;
 		break;
-
-	case DIGGER:
-		col = GREEN;
+	case TXT_DIGGER:
+		col = COL_GREEN;
 		col_add = 3;
 		text = "DIGGER";
 		start_x = x = 100;
@@ -104,26 +98,23 @@ void cl_text::reset(bool run)
 		thick = 15;
 		ang_add = 10;
 		break;
-
-	case COPYRIGHT:
-		text = "COPYRIGHT (C) NEIL ROBERTSON 2011-2016";
+	case TXT_COPYRIGHT:
+		text = COPYRIGHT;
 		x = 47;
 		y = SCR_MID + 50;
 		thick = 2;
 		x_scale = 1;
 		y_scale = 1.5;
-		col = TURQUOISE;
+		col = COL_TURQUOISE;
 		break;
-
-	case S_TO_START:
+	case TXT_S_TO_START:
 		text = "PRESS 'S' TO START";
 		x = 195;
 		y = SCR_MID + 100;
 		y_scale = 3;
 		thick = 4;
 		break;
-
-	case LEVEL_START:
+	case TXT_LEVEL_START:
 		thick = 10;
 		x = SCR_MID - 210;
 		y = SCR_MID;
@@ -131,21 +122,19 @@ void cl_text::reset(bool run)
 		y_scale = 6;
 		ang_add = 10;
 		break;
-
-	case READY:
+	case TXT_READY:
 		text = "READY!";
-		col = GREEN;
+		col = COL_GREEN;
 		x_scale = 6;
 		y_scale = 6;
 		x = SCR_MID - 210;
 		y = SCR_MID;
 		break;
-
-	case GAME_OVER:
+	case TXT_GAME_OVER:
 		text = "GAME OVER";
 		x = SCR_SIZE;
 		y = SCR_MID;
-		col = GREEN;
+		col = COL_GREEN;
 		col_add = 2;
 		x_scale = 4;
 		y_scale = 10;
@@ -153,49 +142,41 @@ void cl_text::reset(bool run)
 		gap = 120;
 		ang_add = -6;
 		break;
-
-	case GOT_SPIKY:
+	case TXT_GOT_SPIKY:
 		y_scale = 3;
 		thick = 3;
 		break;
-
-	case BONUS_SCORE:
-		col = RED;
+	case TXT_BONUS_SCORE:
+		col = COL_RED;
 		col_add = 1;
 		y_scale = 2;
 		thick = 3;
 		break;
-
-	case BONUS_LIFE:
+	case TXT_BONUS_LIFE:
 		text = "BONUS LIFE!";
 		x = SCR_SIZE;
 		y = SCR_MID;	
-		col = GREEN;
+		col = COL_GREEN;
 		cnt = 0;
 		break;
-
-	case INVISIBILITY_POWERUP:
-		col = PURPLE;
+	case TXT_INVISIBILITY_POWERUP:
+		col = COL_PURPLE;
 		thick = 5;
 		break;
-
-	case SUPERBALL_POWERUP:
-		col = WHITE;
+	case TXT_SUPERBALL_POWERUP:
+		col = COL_WHITE;
 		thick = 5;
 		break;
-	
-	case FREEZE_POWERUP:
-		col = BLUE;
+	case TXT_FREEZE_POWERUP:
+		col = COL_BLUE;
 		break;
-
-	case NEW_HIGH_SCORE:
+	case TXT_NEW_HIGH_SCORE:
 		text = "NEW HIGH SCORE!";
 		x = SCR_SIZE;
 		x_scale = 3;
 		y_scale = 3;
 		thick = 7;
 		break;
-
 	default:
 		assert(0);
 	}
@@ -221,8 +202,8 @@ void cl_text::draw()
 
 	switch(type)
 	{
-	case PAUSED:
-		if (col >= GREEN2 || col <= GREEN)
+	case TXT_PAUSED:
+		if (col >= COL_GREEN2 || col <= COL_GREEN)
 			col_add = -col_add;
 
 		if (y_scale >= 8 || y_scale <= 3)
@@ -232,8 +213,8 @@ void cl_text::draw()
 		}
 		break;
 
-	case DIGGER:
-		if (col >= GREEN2) col = GREEN;
+	case TXT_DIGGER:
+		if (col >= COL_GREEN2) col = COL_GREEN;
 
 		// Slow down rotation
 		if (ang_add > 5) ang_add -= 0.03;
@@ -269,16 +250,16 @@ void cl_text::draw()
 		}
 		break;
 
-	case COPYRIGHT:
+	case TXT_COPYRIGHT:
 		if (game_stage_cnt < DIGGER_STOP) return;
 		break;
 
-	case S_TO_START:
+	case TXT_S_TO_START:
 		if (game_stage_cnt < DIGGER_STOP || game_stage_cnt % 40 > 20)
 			return;
 		break;
 
-	case LEVEL_START:
+	case TXT_LEVEL_START:
 		sprintf(txt,"LEVEL %02d",level);
 		text = txt;
 		if (angle >= 350)
@@ -288,13 +269,13 @@ void cl_text::draw()
 		}
 		break;		
 
-	case READY:
+	case TXT_READY:
 		incAngle(angle,10 - abs(20 - (game_stage_cnt % 40)));
 		thick = 15 - abs(10 - (game_stage_cnt % 20));
-		col = ((int)col + 5) % GREEN2;
+		col = ((int)col + 5) % COL_GREEN2;
 		break;
 
-	case GAME_OVER:
+	case TXT_GAME_OVER:
 		if (gap > 0) 
 		{
 			gap -= 2;
@@ -310,11 +291,11 @@ void cl_text::draw()
 				angle = 0;
 			}
 		}
-		if (col >= GREEN2) col = GREEN;
+		if (col >= COL_GREEN2) col = COL_GREEN;
 		break;
 
-	case GOT_SPIKY:
-	case BONUS_SCORE:
+	case TXT_GOT_SPIKY:
+	case TXT_BONUS_SCORE:
 		if (cnt)
 		{
 			--cnt;
@@ -333,16 +314,16 @@ void cl_text::draw()
 			dist += 2;
 		}
 		else y -= 20;
-		if (type == GOT_SPIKY) col = random() % NUM_FULL_COLOURS;
+		if (type == TXT_GOT_SPIKY) col = random() % NUM_FULL_COLOURS;
 		else
 		{
-			if (col == YELLOW || col == BLUE) col_add = -1;
+			if (col == COL_YELLOW || col == COL_BLUE) col_add = -1;
 			else
-			if (col == RED || col == GREEN) col_add = 1;
+			if (col == COL_RED || col == COL_GREEN) col_add = 1;
 		}
 		break;
 
-	case BONUS_LIFE:
+	case TXT_BONUS_LIFE:
 		// This draws individual characters 
 		if (x < -400)
 		{
@@ -358,10 +339,10 @@ void cl_text::draw()
 		}
 		x -= 8;
 		cnt = (cnt + 10) % 360;
-		if (++col > YELLOW) col = GREEN;
+		if (++col > COL_YELLOW) col = COL_GREEN;
 		return;
 
-	case INVISIBILITY_POWERUP:
+	case TXT_INVISIBILITY_POWERUP:
 		if (y < 0)
 		{
 			running = false;
@@ -376,7 +357,7 @@ void cl_text::draw()
 		if ((game_stage_cnt % 4) < 2) return;
 		break;
 
-	case SUPERBALL_POWERUP:
+	case TXT_SUPERBALL_POWERUP:
 		if (y < 0)
 		{
 			running = false;
@@ -391,7 +372,7 @@ void cl_text::draw()
 		col = random() % NUM_FULL_COLOURS;
 		break;
 
-	case FREEZE_POWERUP:
+	case TXT_FREEZE_POWERUP:
 		if (y < 0)
 		{
 			running = false;
@@ -404,10 +385,10 @@ void cl_text::draw()
 
 		x -= 5;
 		thick = 5 + random() % 30;
-		if (--col == TURQUOISE) col = BLUE;
+		if (--col == COL_TURQUOISE) col = COL_BLUE;
 		break;
 
-	case NEW_HIGH_SCORE:
+	case TXT_NEW_HIGH_SCORE:
 		if (x < -SCR_SIZE)
 		{
 			running = false;

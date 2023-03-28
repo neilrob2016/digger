@@ -7,7 +7,7 @@ cl_object::cl_object(en_type t)
 	x = 0;
 	y = 0;
 	speed = 0;
-	dir = STOP;
+	dir = DIR_STOP;
 	angle = 0;
 	prev_x = 0;
 	prev_y = 0;

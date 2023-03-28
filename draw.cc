@@ -12,7 +12,7 @@ void drawAsciiTable()
 	int c;
 	int c2;
 
-	drawText("*** ASCII TABLE ***",LIGHT_BLUE,2,0,0,1.5,2,SCR_MID - 210,30);
+	drawText("*** ASCII TABLE ***",COL_LIGHT_BLUE,2,0,0,1.5,2,SCR_MID - 210,30);
 
 	x = 140;
 	y = 80;
@@ -26,12 +26,12 @@ void drawAsciiTable()
 		}
 		else x += (CHAR_SIZE * 2 + CHAR_GAP);
 
-		if (ascii_table[c2]) drawChar((char)c2,WHITE,2,0,2,4,x,y);
+		if (ascii_table[c2]) drawChar((char)c2,COL_WHITE,2,0,2,4,x,y);
 	}
 
-	drawText("MADE",RED,2,0,0,1.5,2,SCR_MID - 145,SCR_SIZE - 20);
-	drawText("IN",WHITE,2,0,0,1.5,2,SCR_MID - 45,SCR_SIZE - 20);
-	drawText("ENGLAND",BLUE,2,0,0,1.5,2,SCR_MID + 10,SCR_SIZE - 20);
+	drawText("MADE",COL_RED,2,0,0,1.5,2,SCR_MID - 145,SCR_SIZE - 20);
+	drawText("IN",COL_WHITE,2,0,0,1.5,2,SCR_MID - 45,SCR_SIZE - 20);
+	drawText("ENGLAND",COL_BLUE,2,0,0,1.5,2,SCR_MID + 10,SCR_SIZE - 20);
 }
 
 
@@ -42,35 +42,35 @@ void drawGameScreen()
 {
 	vector<cl_tunnel *>::iterator it1;
 	char text[20];
-	int i;
 
-	drawText("SCORE:",TURQUOISE,2,0,0,0.75,1,10,10);
-	drawText(score_text,GREEN,2,0,0,1,1,85,10);
+	drawText("SCORE:",COL_TURQUOISE,2,0,0,0.75,1,10,10);
+	drawText(score_text,COL_GREEN,2,0,0,1,1,85,10);
 
-	drawText("HIGH :",TURQUOISE,2,0,0,0.75,1,10,25);
+	drawText("HIGH :",COL_TURQUOISE,2,0,0,0.75,1,10,25);
 	if (!done_high_score || (game_stage_cnt % 30) < 15)
-		drawText(high_score_text,PURPLE,2,0,0,1,1,85,25);
+		drawText(high_score_text,COL_PURPLE,2,0,0,1,1,85,25);
 
-	drawText("LIVES:",TURQUOISE,2,0,0,0.75,1.5,SCR_SIZE - 85,15);
-	drawText(lives_text,RED,2,0,0,1,1.5,SCR_SIZE - 10,15);
+	drawText("LIVES:",COL_TURQUOISE,2,0,0,0.75,1.5,SCR_SIZE - 85,15);
+	drawText(lives_text,COL_RED,2,0,0,1,1.5,SCR_SIZE - 10,15);
 
 	// Draw player powerup countdowns
 	if (player->invisible_timer) 
 	{
 		sprintf(text,"%03d",player->invisible_timer);
-		drawText(text,YELLOW,2,0,0,1,1.5,SCR_MID-15,15);
+		drawText(text,COL_YELLOW,2,0,0,1,1.5,SCR_MID-15,15);
 	}
 	else if (player->freeze_timer)
 	{
 		sprintf(text,"%03d",player->freeze_timer);
-		drawText(text,TURQUOISE,2,0,0,1,1.5,SCR_MID-15,15);
+		drawText(text,COL_TURQUOISE,2,0,0,1,1.5,SCR_MID-15,15);
 	}
 
 	// Draw ground, molehills and lines at top so theres always a roof on 
 	// top tunnels
 	drawOrFillRectangle(
 		ground_colour,0,0,PLAY_AREA_TOP,SCR_SIZE,PLAY_AREA_HEIGHT,FILL);
-	for(i=0;i < NUM_MOLEHILLS;++i) molehill[i].draw();
+	for(auto mh: molehill) mh.draw();
+
 	drawLine(
 		ground_colour,4,
 		0,PLAY_AREA_TOP-2,START_X-TUNNEL_HALF-2,PLAY_AREA_TOP-2);
@@ -79,22 +79,21 @@ void drawGameScreen()
 		START_X+TUNNEL_HALF+2,PLAY_AREA_TOP-2,SCR_SIZE,PLAY_AREA_TOP-2);
 
 	// Draw stones
-	for(i=0;i < MAX_STONES;++i) stones[i]->draw();
+	for(auto stn: stones) stn->draw();
 
 	// Draw tunnels
-	FOR_ALL_TUNNELS(it1) (*it1)->draw();
+	for(auto tun: tunnels) tun->draw();
 
 	// Draw game objects
-	FOR_ALL_OBJECTS(i)
-		if (objects[i]->stage != STAGE_INACTIVE) objects[i]->draw();
-
+	for(auto obj: objects) if (obj->stage != STAGE_INACTIVE) obj->draw();
+		
 	switch(game_stage)
 	{
 	case GAME_STAGE_ATTRACT_PLAY:
 		text_digger->draw();
 		text_s_to_start->draw();
 		text_copyright->draw();
-		drawText(version_text,WHITE,1,0,0,0.8,1.2,170,SCR_SIZE - 10);
+		drawText(version_text,COL_WHITE,1,0,0,0.8,1.2,170,SCR_SIZE - 10);
 		break;
 
 	case GAME_STAGE_LEVEL_START:
@@ -116,9 +115,9 @@ void drawGameScreen()
 
 	case GAME_STAGE_LEVEL_COMPLETE:
 		if (game_stage_cnt % 40 < 20)
-			drawText("LEVEL COMPLETE",LIGHT_BLUE,8,0,0,2.8,7,52,SCR_MID - 30);
+			drawText("LEVEL COMPLETE",COL_LIGHT_BLUE,8,0,0,2.8,7,52,SCR_MID - 30);
 		if (end_of_level_bonus)
-			drawText(end_of_level_bonus_str,WHITE,6,0,0,2,6,175,SCR_MID + 60);
+			drawText(end_of_level_bonus_str,COL_WHITE,6,0,0,2,6,175,SCR_MID + 60);
 		break;
 
 	case GAME_STAGE_GAME_OVER:
@@ -129,8 +128,8 @@ void drawGameScreen()
 		break;
 	}	
 
-	for(i=0;i < NUM_BONUS_SCORES;++i)
-		if (text_bonus_score[i]->running) text_bonus_score[i]->draw();
+	for(auto tbs: text_bonus_score) if (tbs->running) tbs->draw();
+
 	if (text_got_spiky->running) text_got_spiky->draw();
 
 	text_invisibility_powerup->draw();
@@ -140,8 +139,8 @@ void drawGameScreen()
 #ifdef SOUND
 	if (!do_sound && !IN_ATTRACT_MODE())
 	{
-		drawText("S",WHITE,2,0,0,2,1.5,SCR_SIZE - 190,15);
-		drawText("/",RED,5,0,0,2,1.5,SCR_SIZE - 190,15);
+		drawText("S",COL_WHITE,2,0,0,2,1.5,SCR_SIZE - 190,15);
+		drawText("/",COL_RED,5,0,0,2,1.5,SCR_SIZE - 190,15);
 	}
 #endif
 }
@@ -161,10 +160,10 @@ void drawEnemyScreen()
 	};
 	static int colour[NUM_ATTRACT_ENEMIES] =
 	{
-		LIGHT_BLUE,
-		PURPLE,
-		TURQUOISE,
-		GREEN
+		COL_LIGHT_BLUE,
+		COL_PURPLE,
+		COL_TURQUOISE,
+		COL_GREEN
 	};
 
 	drawText(
@@ -182,33 +181,33 @@ void drawEnemyScreen()
 }
 
 
-#define KX 50
-#define KY 120
+
 
 /*** Display the list of keys ***/
 void drawKeysScreen()
 {
-	drawText("*** CONTROL KEYS ***",LIGHT_BLUE,2,0,0,1.5,2,SCR_MID - 210,30);
+	const int kx = 50;
+	const int ky = 120;
 
-	drawText("'S'",ORANGE,2,0,0,1,2,KX,KY);
-	drawText(": START",WHITE,2,0,0,1,2,KX + 50,KY);
+	drawText("*** CONTROL KEYS ***",COL_LIGHT_BLUE,2,0,0,1.5,2,SCR_MID - 210,30);
 
-	drawText("'Q'",ORANGE,2,0,0,1,2,KX,KY + 40);
-	drawText(": QUIT",WHITE,2,0,0,1,2,KX + 50,KY + 40);
+	drawText("'S'",COL_ORANGE,2,0,0,1,2,kx,ky);
+	drawText(": START",COL_WHITE,2,0,0,1,2,kx + 50,ky);
 
-	drawText("'P'",ORANGE,2,0,0,1,2,KX,KY + 80);
-	drawText(": PAUSE",WHITE,2,0,0,1,2,KX + 50,KY + 80);
+	drawText("'P'",COL_ORANGE,2,0,0,1,2,kx,ky + 40);
+	drawText(": PAUSE",COL_WHITE,2,0,0,1,2,kx + 50,ky + 40);
 
+	drawText("ESC",COL_ORANGE,2,0,0,1,2,kx,ky + 80);
+	drawText(": QUIT",COL_WHITE,2,0,0,1,2,kx + 50,ky + 80);
 #ifdef SOUND
-	drawText("'V'",ORANGE,2,0,0,1,2,KX,KY + 120);
-	drawText(": SOUND ON/OFF",WHITE,2,0,0,1,2,KX + 50,KY + 120);
+	drawText("'V'",COL_ORANGE,2,0,0,1,2,kx,ky + 120);
+	drawText(": SOUND ON/OFF",COL_WHITE,2,0,0,1,2,kx + 50,ky + 120);
 #endif
+	drawText("ARROW KEYS",COL_MAUVE,2,0,0,1,2,kx,ky + 200);
+	drawText(": MOVE",COL_WHITE,2,0,0,1,2,kx + 160,ky + 200);
 
-	drawText("ARROW KEYS",MAUVE,2,0,0,1,2,KX,KY + 200);
-	drawText(": MOVE",WHITE,2,0,0,1,2,KX + 160,KY + 200);
-
-	drawText("SPACEBAR",MAUVE,2,0,0,1,2,KX,KY + 240);
-	drawText(": THROW BALL",WHITE,2,0,0,1,2,KX + 160,KY + 240);
+	drawText("SPACEBAR",COL_MAUVE,2,0,0,1,2,kx,ky + 240);
+	drawText(": THROW BALL",COL_WHITE,2,0,0,1,2,kx + 160,ky + 240);
 }
 
 
@@ -297,7 +296,7 @@ void drawLine(int col, double thick, double x1, double y1, double x2, double y2)
 	y1 *= y_scaling;
 	x2 *= x_scaling;
 	y2 *= y_scaling;
-	if (col < 0 || col >= NUM_COLOURS) col = 0;
+	if (col < COL_GREEN || col >= NUM_COLOURS) col = COL_GREEN;
 
 	setThickness(col,thick);
 	XDrawLine(display,drw,gc[col],(int)x1,(int)y1,(int)x2,(int)y2);
@@ -319,7 +318,7 @@ void drawOrFillCircle(
 
 	if (refresh_cnt) return;
 
-	if (col < 0 || col >= NUM_COLOURS) col = 0;
+	if (col < COL_GREEN || col >= NUM_COLOURS) col = COL_GREEN;
 
 	x_diam = diam * x_scaling;
 	y_diam = diam * y_scaling;
@@ -367,7 +366,7 @@ void drawOrFillPolygon(
 
 	if (refresh_cnt) return;
 
-	if (col < 0 || col >= NUM_COLOURS) col = 0;
+	if (col < COL_GREEN || col >= NUM_COLOURS) col = COL_GREEN;
 
 	for(i=0;i < num_points;++i)
 	{
@@ -413,7 +412,7 @@ void drawOrFillRectangle(
 	if (w < 1) w = 1;
 	if (h < 1) h = 1;
 
-	if (col < 0 || col >= NUM_COLOURS) col = 0;
+	if (col < COL_GREEN || col >= NUM_COLOURS) col = COL_GREEN;
 
 	if (fill == FILL)
 		XFillRectangle(display,drw,gc[col],(int)x,(int)y,(int)w,(int)h);

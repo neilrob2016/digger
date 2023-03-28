@@ -27,7 +27,6 @@ void cl_wurmal::activate()
 	int ymod = PLAY_AREA_HEIGHT - diam;
 	int i;
 	int j;
-	int o;
 
 	cl_enemy::activate();
 
@@ -52,14 +51,14 @@ void cl_wurmal::activate()
 
 	if (j == 20) return; 
 
-	FOR_ALL_OBJECTS(o)
+	for(auto obj: objects)
 	{
-		switch(objects[o]->type)
+		switch(obj->type)
 		{
 		case TYPE_NUGGET:
 		case TYPE_BOULDER:
-			if (objects[o]->stage == STAGE_RUN &&
-			    cl_object::overlapDist(objects[o]))
+			if (obj->stage == STAGE_RUN &&
+			    cl_object::overlapDist(obj))
 			{
 				if (++i == 10) return;
 				goto LOOP;
@@ -79,7 +78,7 @@ void cl_wurmal::activate()
 	y_edge = y;
 	eating = false;
 	hit_boulder = false;
-	eye_col = BLACK2;
+	eye_col = COL_BLACK2;
 
 	initSegments();
 
@@ -108,7 +107,7 @@ void cl_wurmal::attractActivate()
 {
 	cl_enemy::attractActivate();
 	y = 400;
-	eye_col = BLACK2;
+	eye_col = COL_BLACK2;
 	angle = 90;
 	initSegments();
 }
@@ -189,7 +188,7 @@ void cl_wurmal::stageRun()
 	// but just in case.
 	if (outsideGround(x,y))
 	{
-		eye_col = BLACK2;
+		eye_col = COL_BLACK2;
 		eating = false;
 		return;
 	}
@@ -299,18 +298,17 @@ void cl_wurmal::findNugget()
 	cl_object *closest;
 	double closest_dist;
 	double dist;
-	int o;
 
 	nugget = NULL;
 	closest = NULL;
 	closest_dist = FAR_FAR_AWAY;
 
-	FOR_ALL_OBJECTS(o)
+	for(auto obj: objects)
 	{
-		if (objects[o]->type == TYPE_NUGGET && 
-		    objects[o]->stage == STAGE_RUN)
+		if (obj->type == TYPE_NUGGET && 
+		    obj->stage == STAGE_RUN)
 		{
-			nug = (cl_nugget *)objects[o];
+			nug = (cl_nugget *)obj;
 
 			switch(nug->nugtype)
 			{
@@ -331,13 +329,13 @@ void cl_wurmal::findNugget()
 
 			if (find_random_nugget)
 			{
-				nugget = objects[o];
+				nugget = obj;
 				return;
 			}
-			if ((dist = distToObject(objects[o])) < closest_dist)
+			if ((dist = distToObject(obj)) < closest_dist)
 			{
 				closest_dist = dist;
-				closest = objects[o];
+				closest = obj;
 			}
 		}
 	}
@@ -516,7 +514,7 @@ void cl_wurmal::draw()
 	case STAGE_HIT:
 		xsize -= 0.03;
 		ysize -= 0.03;
-		eye_col = (game_stage_cnt % 2) ? BLACK2 : RED2;
+		eye_col = (game_stage_cnt % 2) ? COL_BLACK2 : COL_RED2;
 		hd = head_diam * xsize;
 		break;
 
@@ -536,7 +534,7 @@ void cl_wurmal::draw()
 			// Can't use objDrawOrFillCircle() because angle value 
 			// will cause problems
 			drawOrFillCircle(
-				GREEN+i*3,
+				COL_GREEN + i * 3,
 				0,(double)diam * xsize,
 				segment[i].x,segment[i].y,fill);
 		}
@@ -544,9 +542,11 @@ void cl_wurmal::draw()
 
 	// Draw head
 	objDrawOrFillCircle(
-		player->freeze_timer ? MEDIUM_BLUE : PURPLE,4,hd,0,0,fill);
+		player->freeze_timer ? COL_MEDIUM_BLUE : COL_PURPLE,
+		4,hd,0,0,fill);
 	objDrawOrFillCircle(eye_col,4,10,eye_x[0]*xsize,eye_y[0]*ysize,fill);
 	objDrawOrFillCircle(eye_col,4,10,eye_x[1]*xsize,eye_y[1]*ysize,fill);
 
-	if (eye_col != BLACK && ++eye_col == BLACK3) eye_col = BLACK2;
+	if (eye_col != COL_BLACK && ++eye_col == COL_BLACK3)
+		eye_col = COL_BLACK2;
 }

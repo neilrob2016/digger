@@ -95,17 +95,17 @@ void cl_grubble::activate()
 	bodynum = 0;
 	x = START_X;
 	y = -diam;
-	dir = STOP;
+	dir = DIR_STOP;
 	dinner = NULL;
 	req_angle = 0;
 	eating = false;
 	dist_to_player = FAR_FAR_AWAY;
 	dist_to_food = FAR_FAR_AWAY;
 
-	body_col = PURPLE;
-	teeth_col = YELLOW;
-	eye_col = WHITE;
-	pup_col = BLUE;
+	body_col = COL_PURPLE;
+	teeth_col = COL_YELLOW;
+	eye_col = COL_WHITE;
+	pup_col = COL_BLUE;
 
 	start_speed = speed = (level < 20 ? 2.2 + 0.2 * level : 6.2);
 	max_depth = level < 4 ? 3 + level : 7;
@@ -122,10 +122,10 @@ void cl_grubble::attractActivate()
 	cl_enemy::attractActivate();
 
 	y = 260;
-	body_col = PURPLE;
-	teeth_col = YELLOW;
-	eye_col = WHITE;
-	pup_col = BLUE;
+	body_col = COL_PURPLE;
+	teeth_col = COL_YELLOW;
+	eye_col = COL_WHITE;
+	pup_col = COL_BLUE;
 	angle = 180;
 }
 
@@ -235,7 +235,7 @@ void cl_grubble::stageRun()
 	{
 		// Next tunnel set, head for it
 		setDirection();
-		if (dir == STOP) return; 
+		if (dir == DIR_STOP) return; 
 	}	
 	else if (dinner)
 	{
@@ -295,25 +295,25 @@ void cl_grubble::move()
 {
 	switch(dir)
 	{
-	case STOP:
+	case DIR_STOP:
 		return;
 
-	case LEFT:
+	case DIR_LEFT:
 		x -= speed;
 		req_angle = 180;
 		break;
 
-	case RIGHT:
+	case DIR_RIGHT:
 		x += speed;
 		req_angle = 0;
 		break;
 
-	case UP:
+	case DIR_UP:
 		y -= speed;
 		req_angle = 270;
 		break;
 
-	case DOWN:
+	case DIR_DOWN:
 		y += speed;
 		req_angle = 90;
 		break;
@@ -331,19 +331,17 @@ void cl_grubble::move()
 /*** Find a boulder sitting in a tunnel we can munch on ***/
 bool cl_grubble::findDinner()
 {
-	int o;
-
-	FOR_ALL_OBJECTS(o)
+	for(auto obj: objects)
 	{
-		if (objects[o]->type == TYPE_BOULDER && 
-		    objects[o]->stage == STAGE_RUN &&
-		    objects[o]->curr_tunnel &&
+		if (obj->type == TYPE_BOULDER && 
+		    obj->stage == STAGE_RUN &&
+		    obj->curr_tunnel &&
 		    findShortestPath(
 			0,
 			5,
-			curr_tunnel,objects[o]->curr_tunnel,next_tunnel) != -1)
+			curr_tunnel,obj->curr_tunnel,next_tunnel) != -1)
 		{
-			dinner = (cl_boulder *)objects[o];
+			dinner = (cl_boulder *)obj;
 			setDirection();
 			return true;
 		}
@@ -409,7 +407,7 @@ void cl_grubble::haveCollided(cl_object *obj, double dist)
 		if (!player->freeze_timer)
 		{
 			hit_player = true;
-			body_col = RED;
+			body_col = COL_RED;
 		}
 		break;
 
@@ -435,17 +433,17 @@ void cl_grubble::draw()
 
 	case STAGE_RUN:
 		if (!(game_stage_cnt % 10)) bodynum = !bodynum;
-		bcol = player->freeze_timer ? MEDIUM_BLUE : body_col;
+		bcol = player->freeze_timer ? COL_MEDIUM_BLUE : body_col;
 		break;
 
 	case STAGE_FALL:
 		break;
 
 	case STAGE_HIT:
-		body_col = (body_col == PURPLE ? YELLOW : PURPLE);
-		teeth_col = (teeth_col == YELLOW ? PURPLE : YELLOW);
-		eye_col = (eye_col == WHITE ? BLUE : WHITE);
-		pup_col = (pup_col == BLUE ? WHITE : BLUE);
+		body_col = (body_col == COL_PURPLE ? COL_YELLOW : COL_PURPLE);
+		teeth_col = (teeth_col == COL_YELLOW ? COL_PURPLE : COL_YELLOW);
+		eye_col = (eye_col == COL_WHITE ? COL_BLUE : COL_WHITE);
+		pup_col = (pup_col == COL_BLUE ? COL_WHITE : COL_BLUE);
 		break;
 
 	case STAGE_EXPLODE:

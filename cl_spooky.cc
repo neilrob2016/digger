@@ -61,14 +61,14 @@ void cl_spooky::activate()
 	setStage(STAGE_MATERIALISE);
 	x = START_X;
 	y = -diam;
-	dir = STOP;
+	dir = DIR_STOP;
 	pup_x_add = 0;
 	pup_y_add = 0;
 	ang_inc = 0;
 	bodynum = 0;
-	body_col = LIGHT_BLUE;
-	eye_col = WHITE;
-	pup_col = RED;
+	body_col = COL_LIGHT_BLUE;
+	eye_col = COL_WHITE;
+	pup_col = COL_RED;
 
 	start_speed = speed = (level < 20 ? 2 + 0.2 * level : 6);
 	max_depth = level < 4 ? 2 + level : 6;
@@ -86,9 +86,9 @@ void cl_spooky::attractActivate()
 
 	prev_y = y = 120;
 	bodynum = 0;
-	body_col = LIGHT_BLUE;
-	eye_col = WHITE;
-	pup_col = RED;
+	body_col = COL_LIGHT_BLUE;
+	eye_col = COL_WHITE;
+	pup_col = COL_RED;
 }
 
 
@@ -176,7 +176,7 @@ void cl_spooky::stageRun()
 	else if (next_tunnel)
 	{
 		setDirection();
-		if (dir == STOP) return;
+		if (dir == DIR_STOP) return;
 	}
 	// next_tunnel == NULL. 1 in 5 times pick a random new tunnel or if
 	// player is invisible
@@ -208,28 +208,28 @@ void cl_spooky::move()
 
 	switch(dir)
 	{
-	case STOP:
+	case DIR_STOP:
 		break;
 
-	case LEFT:
+	case DIR_LEFT:
 		x -= speed;
 		pup_x_add = -4;
 		pup_y_add = 0;
 		break;
 
-	case RIGHT:
+	case DIR_RIGHT:
 		x += speed;
 		pup_x_add = 4;
 		pup_y_add = 0;
 		break;
 
-	case UP:
+	case DIR_UP:
 		y -= speed;
 		pup_x_add = 0;
 		pup_y_add = -4;
 		break;
 
-	case DOWN:
+	case DIR_DOWN:
 		y += speed;
 		pup_x_add = 0;
 		pup_y_add = 4;
@@ -279,9 +279,9 @@ void cl_spooky::haveCollided(cl_object *obj, double dist)
 		if (!player->freeze_timer)
 		{
 			hit_player = true;
-			body_col = RED;
-			eye_col = LIGHT_BLUE;
-			pup_col = WHITE;
+			body_col = COL_RED;
+			eye_col = COL_LIGHT_BLUE;
+			pup_col = COL_WHITE;
 		}
 		break;
 
@@ -307,20 +307,20 @@ void cl_spooky::draw()
 
 	case STAGE_RUN:
 		if (!(game_stage_cnt % 10)) bodynum = !bodynum;
-		bcol = player->freeze_timer ? MEDIUM_BLUE : body_col;
+		bcol = player->freeze_timer ? COL_MEDIUM_BLUE : body_col;
 		break;
 
 	case STAGE_HIT:
 		// Strobe eyes
 		if ((game_stage_cnt % 6) < 3)
 		{
-			eye_col = RED;
-			pup_col = WHITE;
+			eye_col = COL_RED;
+			pup_col = COL_WHITE;
 		}
 		else
 		{
-			eye_col = WHITE;
-			pup_col = RED;
+			eye_col = COL_WHITE;
+			pup_col = COL_RED;
 		}
 
 		// Shiver
@@ -369,8 +369,8 @@ void cl_spooky::draw()
 	objDrawOrFillRectangle(pup_col,1,pup_x_add + 8,pup_y_add - 7,5,5,fill);
 
 	// Draw line of mouth and teeth
-	objDrawLine(RED,2,-10,5,10,5);
-	objDrawOrFillPolygon(GREEN,1,teeth,TEETH_POINTS,fill);
+	objDrawLine(COL_RED,2,-10,5,10,5);
+	objDrawOrFillPolygon(COL_GREEN,1,teeth,TEETH_POINTS,fill);
 
 	if (stage == STAGE_HIT)
 	{

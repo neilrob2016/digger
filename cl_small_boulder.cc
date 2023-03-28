@@ -12,7 +12,7 @@ cl_small_boulder::cl_small_boulder(cl_boulder *own):
 void cl_small_boulder::activate()
 {
 	cl_rock::activate();
-	col = GREYISH;
+	col = COL_GREYISH;
 	reset();
 }
 

@@ -53,26 +53,22 @@ void cl_ball::activate()
 
 	switch(player->facing_dir)
 	{
-	case LEFT:
+	case DIR_LEFT:
 		x_mult = -1;
 		y_mult = 1;
 		break;
-
-	case RIGHT:
+	case DIR_RIGHT:
 		x_mult = 1;
 		y_mult = 1;
 		break;
-
-	case UP:
+	case DIR_UP:
 		x_mult = 1;
 		y_mult = -1;
 		break;
-
-	case DOWN:
+	case DIR_DOWN:
 		x_mult = -1;
 		y_mult = 1;
 		break;
-
 	default:
 		assert(0);
 	}
@@ -229,7 +225,7 @@ void cl_ball::draw()
 			// Draw rings. Just eye candy.
 			drawOrFillCircle(col,4,diam + (stage_cnt % 10) * 3,x,y,DRAW);
 		}
-		else drawOrFillCircle(BALL_COLOUR,0,diam,x,y,FILL);
+		else drawOrFillCircle(COL_RED,0,diam,x,y,FILL);
 		break;
 
 	case STAGE_EXPLODE:

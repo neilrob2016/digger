@@ -44,14 +44,14 @@ void cl_player::activate()
 	xsize = ysize = 1;
 	diam = square2[1].x * 2;
 	radius = diam / 2;
-	prev_dir = STOP;
-	facing_dir = RIGHT;
+	dir = DIR_STOP;
+	prev_dir = DIR_STOP;
+	facing_dir = DIR_RIGHT;
 	ball_ang = 90;
 	req_ball_ang = 90;
-	col = GREEN;
+	col = COL_GREEN;
 	superball = false;
 	fill = FILL;
-	dir = STOP;
 	hit_object = false;
 	hit_edge = false;
 
@@ -164,10 +164,8 @@ void cl_player::run()
 /*** During games attract mode ***/
 void cl_player::autoplay()
 {
-	cl_object *obj;
 	double xd;
 	double yd;
-	int o;
 
 	switch(game_stage_cnt)
 	{
@@ -211,9 +209,8 @@ void cl_player::autoplay()
 		}
 
 		// See if an enemy is near and if so move away
-		FOR_ALL_OBJECTS(o)
+		for(auto obj: objects)
 		{
-			obj = objects[o];
 			if (obj->stage != STAGE_RUN && 
 			    obj->stage != STAGE_MATERIALISE) continue;
 
@@ -256,7 +253,7 @@ void cl_player::autoplayRandomMove()
 {
 	switch(prev_dir)
 	{
-	case STOP:
+	case DIR_STOP:
 		switch(random() % 4)
 		{
 		case 0:
@@ -276,7 +273,7 @@ void cl_player::autoplayRandomMove()
 		}
 		break;
 
-	case UP:
+	case DIR_UP:
 		// Theres a 1 in 5 chance of reversing direction
 		if (!(random() % AUTOPLAY_REV_MOD))
 			move(XK_Down);
@@ -284,21 +281,21 @@ void cl_player::autoplayRandomMove()
 			move(random() % 2 ? XK_Left : XK_Right);
 		break;
 
-	case DOWN:
+	case DIR_DOWN:
 		if (!(random() % AUTOPLAY_REV_MOD))
 			move(XK_Up);
 		else
 			move(random() % 2 ? XK_Left : XK_Right);
 		break;
 
-	case LEFT:
+	case DIR_LEFT:
 		if (!(random() % AUTOPLAY_REV_MOD))
 			move(XK_Right);
 		else
 			move(random() % 2 ? XK_Up : XK_Down);
 		break;
 
-	case RIGHT:
+	case DIR_RIGHT:
 		if (!(random() % AUTOPLAY_REV_MOD))
 			move(XK_Left);
 		else
@@ -332,7 +329,7 @@ void cl_player::stageRun()
 			setGroundColour();
 			playBGSound(SND_SILENCE);
 		}
-		else ground_colour = BLACK2 + (turbo_enemy_timer * 2 % 15);
+		else ground_colour = COL_BLACK2 + (turbo_enemy_timer * 2 % 15);
 	}
 	if (freeze_timer)
 	{
@@ -341,7 +338,7 @@ void cl_player::stageRun()
 			setGroundColour();
 			echoOff();
 		}
-		else ground_colour = MEDIUM_BLUE;
+		else ground_colour = COL_MEDIUM_BLUE;
 	}
 
 	if (ball_ang != req_ball_ang)
@@ -352,11 +349,11 @@ void cl_player::stageRun()
 	// Deal with movement. If we're stopped do nothing.
 	switch(dir)
 	{
-	case STOP : return;
-	case LEFT : x -= speed;  break;
-	case RIGHT: x += speed;  break;
-	case UP   : y -= speed;  break;
-	case DOWN : y += speed;  break;
+	case DIR_STOP : return;
+	case DIR_LEFT : x -= speed;  break;
+	case DIR_RIGHT: x += speed;  break;
+	case DIR_UP   : y -= speed;  break;
+	case DIR_DOWN : y += speed;  break;
 
 	default   : assert(0);
 	}
@@ -364,36 +361,36 @@ void cl_player::stageRun()
 	if (x > SCR_SIZE - TUNNEL_HALF)
 	{
 		x = SCR_SIZE - TUNNEL_HALF;
-		dir = STOP;
+		dir = DIR_STOP;
 		hit_edge = true;
 	}
 	else if (x < TUNNEL_HALF) 
 	{
 		x = TUNNEL_HALF;
-		dir = STOP;
+		dir = DIR_STOP;
 		hit_edge = true;
 	}
 
 	if (y < PLAY_AREA_TOP + TUNNEL_HALF)
 	{
 		y = PLAY_AREA_TOP + TUNNEL_HALF;
-		dir = STOP;
+		dir = DIR_STOP;
 		hit_edge = true;
 	}
 	else if (y > SCR_SIZE - TUNNEL_HALF)
 	{
 		y = SCR_SIZE - TUNNEL_HALF;
-		dir = STOP;
+		dir = DIR_STOP;
 		hit_edge = true;
 	}
 	curr_tunnel->update((int)x,(int)y);
 
 	switch(dir)
 	{
-	case STOP:
+	case DIR_STOP:
 		break;
 
-	case LEFT : 
+	case DIR_LEFT : 
 		fillTunnelArea(
 			(int)x - TUNNEL_HALF,
 			(int)y - TUNNEL_HALF,
@@ -402,7 +399,7 @@ void cl_player::stageRun()
 		incAngle(-ANGLE_INC);
 		break;
 
-	case RIGHT:
+	case DIR_RIGHT:
 		fillTunnelArea(
 			(int)prev_x + TUNNEL_HALF,
 			(int)y - TUNNEL_HALF,
@@ -411,7 +408,7 @@ void cl_player::stageRun()
 		incAngle(ANGLE_INC);
 		break;
 
-	case UP:
+	case DIR_UP:
 		fillTunnelArea(
 			(int)x - TUNNEL_HALF,
 			(int)y - TUNNEL_HALF,
@@ -420,7 +417,7 @@ void cl_player::stageRun()
 		incAngle(-ANGLE_INC);
 		break;
 
-	case DOWN:
+	case DIR_DOWN:
 		fillTunnelArea(
 			(int)x - TUNNEL_HALF,
 			(int)prev_y + TUNNEL_HALF,
@@ -491,22 +488,22 @@ void cl_player::move(KeySym key)
 	switch(key)
 	{
 	case XK_Left:
-		dir = LEFT;
+		dir = DIR_LEFT;
 		req_ball_ang = 270;
 		break;
 
 	case XK_Right:
-		dir = RIGHT;
+		dir = DIR_RIGHT;
 		req_ball_ang = 90;
 		break;
 
 	case XK_Up:
-		dir = UP;
+		dir = DIR_UP;
 		req_ball_ang = 0;
 		break;
 
 	case XK_Down:
-		dir = DOWN;
+		dir = DIR_DOWN;
 		req_ball_ang = 180;
 		break;
 
@@ -519,7 +516,7 @@ void cl_player::move(KeySym key)
 	if (dir != prev_dir)
 	{
 		// Changed direction
-		if (prev_dir != STOP)
+		if (prev_dir != DIR_STOP)
 		{
 			tunnelComplete();
 
@@ -538,30 +535,30 @@ void cl_player::move(KeySym key)
 /*** Key lifted so stop moving ***/
 void cl_player::stop(KeySym key)
 {
-	if (dir == STOP) return;
+	if (dir == DIR_STOP) return;
 
 	switch(key)
 	{
 	case XK_Left:
-		if (dir == LEFT) break;
+		if (dir == DIR_LEFT) break;
 		return;
 
 	case XK_Right:
-		if (dir == RIGHT) break;
+		if (dir == DIR_RIGHT) break;
 		return;
 
 	case XK_Up:
-		if (dir == UP) break;
+		if (dir == DIR_UP) break;
 		return;
 
 	case XK_Down:
-		if (dir == DOWN) break;
+		if (dir == DIR_DOWN) break;
 		return;
 
 	default:
 		assert(0);
 	}
-	dir = STOP;
+	dir = DIR_STOP;
 }
 
 
@@ -657,7 +654,7 @@ void cl_player::haveCollided(cl_object *obj, double dist)
 
 		// If we're going left or right we might be able to push
 		// the boulder
-		if (dir == LEFT || dir == RIGHT)
+		if (dir == DIR_LEFT || dir == DIR_RIGHT)
 		{
 			x = prev_x;
 			x += ((cl_boulder *)obj)->push(dir);
@@ -665,7 +662,7 @@ void cl_player::haveCollided(cl_object *obj, double dist)
 		else
 		{
 			y = prev_y;
-			dir = STOP;
+			dir = DIR_STOP;
 		}
 		hit_object = true;
 		break;
@@ -709,16 +706,16 @@ void cl_player::draw()
 	// Draw body
 	objDrawOrFillPolygon((int)col,0,square1,NUM_POINTS,fill);
 	objDrawOrFillPolygon(
-		(int)(col + BLUE) % GREEN2,0,square2,NUM_POINTS,fill);
+		(int)(col + COL_BLUE) % COL_GREEN2,0,square2,NUM_POINTS,fill);
 
 	if (stage == STAGE_RUN)
 	{
 		col += 0.2;
-		if (col >= GREEN2) col = GREEN;
+		if (col >= COL_GREEN2) col = COL_GREEN;
 	}
 
 	// Draw ball holder. Based on angle = 0
-	drawLine(YELLOW,5*xsize,x,y,ball_x,ball_y);
+	drawLine(COL_YELLOW,5*xsize,x,y,ball_x,ball_y);
 
 	// Draw ball or its little holding cup if its not there
 	if (ball->stage == STAGE_INACTIVE)
@@ -731,11 +728,11 @@ void cl_player::draw()
 		else
 		{
 			ball_diam = ball->diam;
-			ball_col = BALL_COLOUR;
+			ball_col = COL_RED;
 		}
 		ball_diam *= xsize;
 
 		drawOrFillCircle(ball_col,0,ball_diam,ball_x,ball_y,fill);
 	}
-	else drawOrFillCircle(YELLOW,0,ball->diam / 2 * xsize,ball_x,ball_y,fill);
+	else drawOrFillCircle(COL_YELLOW,0,ball->diam / 2 * xsize,ball_x,ball_y,fill);
 }

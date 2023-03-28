@@ -77,3 +77,12 @@ August 2016
 - Replace the -delay option with -ref which doesn't slow the game down when
   reducing the framerate.
 - Put more information in title bar
+
+
+March 2023
+==========
+1.1.4
+- Fixed incorrect key message in attract screen. Said 'Q' to quit whereas it's
+  been Escape since 1.0.5.
+- Upgraded some of the code to C++ 2011 standard (too much to do all of it).
+- General code tidying and improvements.

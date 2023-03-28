@@ -16,7 +16,7 @@ void cl_enemy::activate()
 	curr_tunnel = NULL;
 	next_tunnel = NULL;
 	boulder = NULL;
-	prev_dir = STOP;
+	prev_dir = DIR_STOP;
 	start_speed = 0;
 	angle = 0;
 	xsize = ysize = 1;
@@ -95,9 +95,9 @@ void cl_enemy::setDirectionToObject(cl_object *obj)
 	assert(curr_tunnel == obj->curr_tunnel);
 
 	if (curr_tunnel->vert)
-		dir = (y < obj->y ? DOWN : UP);
+		dir = (y < obj->y ? DIR_DOWN : DIR_UP);
 	else
-		dir = (x < obj->x ? RIGHT : LEFT);
+		dir = (x < obj->x ? DIR_RIGHT : DIR_LEFT);
 }
 
 
@@ -197,13 +197,13 @@ void cl_enemy::setDirection()
 	// is blocked so switches to previous tunnel which is NULL
 	if (!next_tunnel)
 	{
-		dir = STOP;
+		dir = DIR_STOP;
 		return;
 	}
-	// Returns STOP if we're within "speed" distance of tunnel
+	// Returns DIR_STOP if we're within "speed" distance of tunnel
 	else dir = dirToTunnel(curr_tunnel,next_tunnel);
 
-	if (dir == STOP)
+	if (dir == DIR_STOP)
 	{
 		// Snap to centre of tunnel
 		if (next_tunnel->vert)
@@ -219,7 +219,7 @@ void cl_enemy::setDirection()
 
 
 
-/*** This assumes the tunnels are linked. Returns STOP if we've arrived.
+/*** This assumes the tunnels are linked. Returns DIR_STOP if we've arrived.
      Add TUNNEL_HALF because we dont want enemys to attempt a turn if
      they're not fully aligned with tunnel since they'll move through wall ***/
 en_dir cl_enemy::dirToTunnel(cl_tunnel *from, cl_tunnel *to)
@@ -229,28 +229,28 @@ en_dir cl_enemy::dirToTunnel(cl_tunnel *from, cl_tunnel *to)
 		// Vertical tunnel next to vertical
 		if (to->vert)
 		{
-			if (y < to->min_y + TUNNEL_HALF) return DOWN;
-			if (y > to->max_y - TUNNEL_HALF) return UP;
-			if (fabs(x - to->x1) < speed) return STOP;
-			return (x < to->x1 ? RIGHT : LEFT);
+			if (y < to->min_y + TUNNEL_HALF) return DIR_DOWN;
+			if (y > to->max_y - TUNNEL_HALF) return DIR_UP;
+			if (fabs(x - to->x1) < speed) return DIR_STOP;
+			return (x < to->x1 ? DIR_RIGHT : DIR_LEFT);
 		}
 
 		// Vertical joined to horizontal
-		if (fabs(y - to->y1) < speed) return STOP;
-		return (y < to->y1 ? DOWN : UP);
+		if (fabs(y - to->y1) < speed) return DIR_STOP;
+		return (y < to->y1 ? DIR_DOWN : DIR_UP);
 	}
 	if (to->vert)
 	{
 		// Horizontal joined to vertical
-		if (fabs(x - to->x1) < speed) return STOP;
-		return (x < to->x1 ? RIGHT : LEFT);
+		if (fabs(x - to->x1) < speed) return DIR_STOP;
+		return (x < to->x1 ? DIR_RIGHT : DIR_LEFT);
 	}
 
 	// Horizontal next to horizontal
-	if (x < to->min_x + TUNNEL_HALF) return RIGHT;
-	if (x > to->max_x - TUNNEL_HALF) return LEFT;
-	if (fabs(y - to->y1) < speed) return STOP;
-	return (y < to->y1 ? DOWN : UP);
+	if (x < to->min_x + TUNNEL_HALF) return DIR_RIGHT;
+	if (x > to->max_x - TUNNEL_HALF) return DIR_LEFT;
+	if (fabs(y - to->y1) < speed) return DIR_STOP;
+	return (y < to->y1 ? DIR_DOWN : DIR_UP);
 }
 
 

@@ -34,7 +34,8 @@ using namespace std;
 #define EXTERN extern
 #endif
 
-#define VERSION "1.1.3"
+#define VERSION   "1.1.4"
+#define COPYRIGHT "Copyright (C) Neil Robertson 2011-2023"
 
 #define SCR_SIZE         650
 #define SCR_MID          (SCR_SIZE / 2)
@@ -86,57 +87,52 @@ using namespace std;
 #define FILL true
 #define DRAW false
 
-#define FOR_ALL_OBJECTS(O) for(O=0;O < MAX_OBJECTS;++O)
-#define FOR_ALL_TUNNELS(IT) for(IT=tunnels.begin();IT != tunnels.end();++IT)
-
 enum en_colours
 {
 	// Colour mixes
-	GREEN       = 0,
-	TURQUOISE   = 15,
-	LIGHT_BLUE  = 20,
-	BLUE        = 30,
-	PURPLE      = 40,
-	MAUVE       = 45,
-	RED         = 60,
-	ORANGE      = 68,
-	YELLOW      = 75,
-	GREEN2      = 89,
-	BLACK       = 90,
-	DARK_GREY   = 92,
-	GREY        = 97,
-	GREYISH     = 100,
-	WHITE       = 105,
+	COL_GREEN       = 0,
+	COL_TURQUOISE   = 15,
+	COL_LIGHT_BLUE  = 20,
+	COL_BLUE        = 30,
+	COL_PURPLE      = 40,
+	COL_MAUVE       = 45,
+	COL_RED         = 60,
+	COL_ORANGE      = 68,
+	COL_YELLOW      = 75,
+	COL_GREEN2      = 89,
+	COL_BLACK       = 90,
+	COL_DARK_GREY   = 92,
+	COL_GREY        = 97,
+	COL_GREYISH     = 100,
+	COL_WHITE       = 105,
 
 	// RGB brightness
-	BLACK2       = 106,
-	DARK_RED     = 111,
-	RED2         = 121,
-	BLACK3       = 122,
-	DARK_GREEN   = 126,
-	MEDIUM_GREEN = 130,
-	GREEN3       = 137,
-	BLACK4       = 138,
-	DARK_BLUE    = 142,
-	MEDIUM_BLUE  = 147,
-	BLUE2        = 153,
+	COL_BLACK2       = 106,
+	COL_DARK_RED     = 111,
+	COL_RED2         = 121,
+	COL_BLACK3       = 122,
+	COL_DARK_GREEN   = 126,
+	COL_MEDIUM_GREEN = 130,
+	COL_GREEN3       = 137,
+	COL_BLACK4       = 138,
+	COL_DARK_BLUE    = 142,
+	COL_MEDIUM_BLUE  = 147,
+	COL_BLUE2        = 153,
 
 	// Mixed brightness
-	BLACK5      = 154,
-	DARK_MAUVE  = 158,
-	MAUVE2      = 169,
-	BLACK6      = 170,
-	STEEL_BLUE  = 174,
-	TURQUOISE2  = 185,
-	BLACK7      = 186,
-	KHAKI       = 190,
-	YELLOW2     = 201
+	COL_BLACK5      = 154,
+	COL_DARK_MAUVE  = 158,
+	COL_MAUVE2      = 169,
+	COL_BLACK6      = 170,
+	COL_STEEL_BLUE  = 174,
+	COL_TURQUOISE2  = 185,
+	COL_BLACK7      = 186,
+	COL_KHAKI       = 190,
+	COL_YELLOW2     = 201
 };
 
 #define NUM_FULL_COLOURS 106
 #define NUM_COLOURS      202
-
-#define BALL_COLOUR RED
 
 enum en_game_stage
 {
@@ -169,11 +165,11 @@ enum en_object_stage
 
 enum en_dir
 {
-	STOP,
-	LEFT,
-	RIGHT,
-	UP,
-	DOWN
+	DIR_STOP,
+	DIR_LEFT,
+	DIR_RIGHT,
+	DIR_UP,
+	DIR_DOWN
 };
 
 enum en_type
@@ -300,20 +296,20 @@ class cl_text
 public:
 	enum en_type
 	{
-		PAUSED,
-		DIGGER,
-		S_TO_START,
-		COPYRIGHT,
-		LEVEL_START,
-		READY,
-		GAME_OVER,
-		GOT_SPIKY,
-		BONUS_SCORE,
-		BONUS_LIFE,
-		INVISIBILITY_POWERUP,
-		FREEZE_POWERUP,
-		SUPERBALL_POWERUP,
-		NEW_HIGH_SCORE
+		TXT_PAUSED,
+		TXT_DIGGER,
+		TXT_S_TO_START,
+		TXT_COPYRIGHT,
+		TXT_LEVEL_START,
+		TXT_READY,
+		TXT_GAME_OVER,
+		TXT_GOT_SPIKY,
+		TXT_BONUS_SCORE,
+		TXT_BONUS_LIFE,
+		TXT_INVISIBILITY_POWERUP,
+		TXT_FREEZE_POWERUP,
+		TXT_SUPERBALL_POWERUP,
+		TXT_NEW_HIGH_SCORE
 	} type;
 	char mesg[100];
 	const char *text;

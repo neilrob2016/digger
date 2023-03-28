@@ -34,7 +34,6 @@ cl_tunnel *cl_tunnel::complete()
 {
 	cl_tunnel *tun;
 	cl_enemy *mon;
-	int o;
 
 	// If no simmilar tunnels just link us to other tunnels
 	if (!(tun = checkForSimilar())) 
@@ -57,11 +56,11 @@ cl_tunnel *cl_tunnel::complete()
 	tun->setLinks();
 
 	// Tell appropriate objects to update their tunnel pointers
-	FOR_ALL_OBJECTS(o)
+	for(auto obj: objects)
 	{
-		if (objects[o]->stage == STAGE_INACTIVE) continue;
+		if (obj->stage == STAGE_INACTIVE) continue;
 
-		switch(objects[o]->type)
+		switch(obj->type)
 		{
 		case TYPE_PLAYER:
 		case TYPE_BALL:
@@ -73,7 +72,7 @@ cl_tunnel *cl_tunnel::complete()
 		case TYPE_SPOOKY:
 		case TYPE_GRUBBLE:
 		case TYPE_WURMAL:
-			mon = (cl_enemy *)objects[o];
+			mon = (cl_enemy *)obj;
 			mon->updateTunnelPtrs(this,tun);
 			break;
 
@@ -90,12 +89,8 @@ cl_tunnel *cl_tunnel::complete()
 /*** Find a tunnel we're simply another part of  - we then extend that ***/
 cl_tunnel *cl_tunnel::checkForSimilar()
 {
-	vector<cl_tunnel *>::iterator it;
-	cl_tunnel *tun;
-
-	FOR_ALL_TUNNELS(it)
+	for(auto tun: tunnels)
 	{
-		tun = *it;
 		if (tun == this || vert != tun->vert) continue;
 
 		// If we're a continuation of a tunnel just update that
@@ -198,13 +193,11 @@ void cl_tunnel::setMaxMin()
 void cl_tunnel::setLinks()
 {
 	vector<cl_tunnel *>::iterator it;
-	cl_tunnel *tun;
 	int xlen;
 	int ylen;
 
-	FOR_ALL_TUNNELS(it)
+	for(auto tun: tunnels)
 	{
-		tun = *it;
 		if (tun != this && 
 		    find(links.begin(),links.end(),tun) == links.end())
 		{
@@ -267,11 +260,12 @@ int cl_tunnel::overlapLen(int v1, int v2, int v3, int v4)
 void cl_tunnel::draw()
 {
 	drawOrFillRectangle(
-		BLACK,0,min_x,min_y,max_x - min_x + 1,max_y - min_y + 1,FILL);
+		COL_BLACK,
+		0,min_x,min_y,max_x - min_x + 1,max_y - min_y + 1,FILL);
 }
 
 
 void cl_tunnel::draw2()
 {
-	drawLine(RED,2,x1,y1,x2,y2);
+	drawLine(COL_RED,2,x1,y1,x2,y2);
 }

@@ -9,7 +9,6 @@ static int cnum;
 cl_boulder::cl_boulder(): cl_rock(TYPE_BOULDER)
 {
 	int i;
-	int o;
 
 	for(i=0;i < NUM_SMALL_BOULDERS;++i)
 		small_boulder[i] = new cl_small_boulder(this);
@@ -17,10 +16,10 @@ cl_boulder::cl_boulder(): cl_rock(TYPE_BOULDER)
 	// Find our position in list - this will never change during the
 	// life of the process.
 	list_pos = 0;
-	FOR_ALL_OBJECTS(o)
+	for(auto obj: objects)
 	{
-		if (!objects[o]) break;
-		if (objects[o]->type == TYPE_BOULDER) ++list_pos;
+		if (!obj) break;
+		if (obj->type == TYPE_BOULDER) ++list_pos;
 	}
 	assert(list_pos < MAX_BOULDERS);
 }
@@ -59,10 +58,10 @@ void cl_boulder::activate()
 
 	cl_rock::activate();
 
-	col = GREYISH;
+	col = COL_GREYISH;
 	on_boulder = false;
 	cant_push_cnt = 0;
-	cant_push_dir = STOP;
+	cant_push_dir = DIR_STOP;
 	curr_tunnel = NULL;
 	break_height = level < 15 ? 400 - 20 * level : 100;
 	wobble_cnt = level < 10 ? 60 - 3 * level : 30;
@@ -106,7 +105,7 @@ void cl_boulder::run()
 		if (cant_push_cnt)
 			--cant_push_cnt;
 		else
-			cant_push_dir = STOP;
+			cant_push_dir = DIR_STOP;
 
 		// Middle must be clear and either one side or the other 
 		// before we fall
@@ -143,7 +142,7 @@ void cl_boulder::run()
 			setCurrTunnel();
 			if (y - fall_start_y >= break_height)
 			{
-				col = RED;
+				col = COL_RED;
 				setStage(STAGE_HIT);
 			}
 			else setStage(STAGE_RUN);
@@ -200,16 +199,12 @@ void cl_boulder::run()
      and set it so grubble can find us ***/
 void cl_boulder::setCurrTunnel()
 {
-	vector<cl_tunnel *>::iterator it;
-	cl_tunnel *tun;
 	cl_tunnel *best_tun = NULL;
 	double best_dist = FAR_FAR_AWAY;
 	double dist;
 
-	FOR_ALL_TUNNELS(it)
+	for(auto tun: tunnels)
 	{
-		tun = *it;
-
 		/* Can be in a number of tunnels at once. Find one we closest
 		   to the centre line of. This isn't a perfect solution as we
 		   could be close to centre line but right on edge but its 
@@ -237,11 +232,11 @@ double cl_boulder::push(en_dir push_dir)
 	int px;
 	double add;
 
-	assert(push_dir == LEFT || push_dir == RIGHT);
+	assert(push_dir == DIR_LEFT || push_dir == DIR_RIGHT);
 
 	if (cant_push_dir == push_dir) return 0;
 
-	if (push_dir == LEFT)
+	if (push_dir == DIR_LEFT)
 	{
 		px = (int)x - radius - 1;
 		add = -PUSH_SPEED;
@@ -314,7 +309,7 @@ void cl_boulder::haveCollided(cl_object *obj, double dist)
 		// Don't want to be able to squash them. Have countdown so that
 		// cant_push_dir not zeroed before push function gets to see it
 		cant_push_cnt = 2;
-		cant_push_dir = (x < obj->x ? RIGHT : LEFT);
+		cant_push_dir = (x < obj->x ? DIR_RIGHT : DIR_LEFT);
 		break;
 		
 	default:

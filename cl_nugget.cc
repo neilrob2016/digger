@@ -13,14 +13,13 @@ void cl_nugget::activate()
 {
 	int xmod;
 	int ymod;
-	int o;
 
 	cl_rock::activate();
 
 	xmod = SCR_SIZE - diam;
 	ymod = PLAY_AREA_HEIGHT - diam;
 
-	start_col = col = YELLOW + (random() % 5) - 2;
+	start_col = col = COL_YELLOW + (random() % 5) - 2;
 
 	if (invisible_powerup_cnt)
 	{
@@ -36,7 +35,7 @@ void cl_nugget::activate()
 	{
 		nugtype = FREEZE;
 		--freeze_powerup_cnt;
-		col = BLUE;
+		col = COL_BLUE;
 	}
 	else if (bonus_nugget_cnt)
 	{
@@ -52,7 +51,7 @@ void cl_nugget::activate()
 		// faster.
 		nugtype = TURBO_ENEMY;
 		--turbo_enemy_powerup_cnt;
-		col = RED2;
+		col = COL_RED2;
 	}
 	else nugtype = NORMAL;
 
@@ -70,10 +69,8 @@ void cl_nugget::activate()
 	        hypot(x - START_X,y - START_Y) < TUNNEL_WIDTH * 2);
 
 	// Check against other objects
-	FOR_ALL_OBJECTS(o)
-	{
-		if (objects[o] != this && overlapDist(objects[o])) goto LOOP;
-	}
+	for(auto obj: objects)
+		if (obj != this && overlapDist(obj)) goto LOOP;
 }
 
 
@@ -112,7 +109,7 @@ void cl_nugget::run()
 		if (stage_cnt == bonus_time)
 		{
 			give_bonus = true;
-			col = GREEN2;
+			col = COL_GREEN2;
 		}
 		else if (stage_cnt > bonus_time + 300)
 		{
@@ -150,7 +147,7 @@ void cl_nugget::haveCollided(cl_object *obj, double dist)
 		if (nugtype != WURMALLED && wurm->nugget == this)
 		{
 			nugtype = WURMALLED;
-			col = YELLOW2;
+			col = COL_YELLOW2;
 		}
 		break;
 
@@ -174,7 +171,7 @@ void cl_nugget::draw()
 	switch(nugtype)
 	{
 	case WURMALLED:
-		if (col > BLACK7) col -= 0.25;
+		if (col > COL_BLACK7) col -= 0.25;
 		break;
 
 	case NORMAL:
@@ -189,7 +186,7 @@ void cl_nugget::draw()
 		break;
 
 	case FREEZE:
-		if (--col == TURQUOISE) col = BLUE;
+		if (--col == COL_TURQUOISE) col = COL_BLUE;
 		break;
 
 	case BONUS:
@@ -204,21 +201,21 @@ void cl_nugget::draw()
 				xsize += 0.1;
 				ysize += 0.1;
 				col += 4;
-				if (col > GREEN2) col = GREEN + (col - GREEN2);
+				if (col > COL_GREEN2)
+					col = COL_GREEN + (col - COL_GREEN2);
 			}
 			else
 			{
 				xsize -= 0.1;
 				ysize -= 0.1;
 				col -= 4;
-				// GREEN = 0
-				if (col < GREEN) col = GREEN2 + col;
+				if (col < COL_GREEN) col = COL_GREEN2 + col;
 			}
 		}
 		break;
 
 	case TURBO_ENEMY:
-		col = (game_stage_cnt % 10 < 5 ? RED : BLACK);
+		col = (game_stage_cnt % 10 < 5 ? COL_RED : COL_BLACK);
 		break;
 
 	default:

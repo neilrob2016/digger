@@ -7,7 +7,6 @@ void resetMolehills();
 /*** Stages are changed in mainloop() and cl_player::run() ***/
 void setGameStage(en_game_stage stg)
 {
-	int o;
 	int i;
 
 	game_stage = stg;
@@ -79,20 +78,20 @@ void setGameStage(en_game_stage stg)
 
 		// Reset all objects except boulders and nuggets which stay
 		// in STAGE_RUN unless boulder is being eaten
-		FOR_ALL_OBJECTS(o)
+		for(auto obj: objects)
 		{
-			switch(objects[o]->type)
+			switch(obj->type)
 			{
 			case TYPE_NUGGET:
 				break;
 
 			case TYPE_BOULDER:
-				if (objects[o]->stage == STAGE_BEING_EATEN)
-					objects[o]->setStage(STAGE_INACTIVE);
+				if (obj->stage == STAGE_BEING_EATEN)
+					obj->setStage(STAGE_INACTIVE);
 				break;
 
 			default:
-				objects[o]->setStage(STAGE_INACTIVE);
+				obj->setStage(STAGE_INACTIVE);
 			}
 		}
 		break;
@@ -211,8 +210,8 @@ void initLevel()
 /*** Have a guess ***/
 void deactivateAllObjects()
 {
-	int o;
-	FOR_ALL_OBJECTS(o) objects[o]->setStage(STAGE_INACTIVE);
+	for(auto obj: objects) obj->setStage(STAGE_INACTIVE);
+	
 }
 
 
@@ -222,16 +221,11 @@ void deactivateAllObjects()
      activate them ***/
 void activateObjectsTotal(en_type type, int num)
 {
-	int o;
+	if (num < 1) return;
 	int cnt = 0;
 
-	if (num < 1) return;
-
-	FOR_ALL_OBJECTS(o)
-	{
-		cnt += (objects[o]->stage != STAGE_INACTIVE && 
-		        objects[o]->type == type);
-	}
+	for(auto obj: objects)
+		cnt += (obj->stage != STAGE_INACTIVE && obj->type == type);
 	if (cnt < num) activateObjects(type,num - cnt);
 }
 
@@ -241,18 +235,15 @@ void activateObjectsTotal(en_type type, int num)
 /*** Activate the given number of objects ***/
 void activateObjects(en_type type, int num)
 {
-	int o;
-	int cnt = 0;
-	
 	if (num < 1) return;
+	int cnt = 0;
 
-	FOR_ALL_OBJECTS(o)
+	for(auto obj: objects)
 	{
-		if (objects[o]->type == type && 
-		    objects[o]->stage == STAGE_INACTIVE)
+		if (obj->type == type && obj->stage == STAGE_INACTIVE)
 		{
-			objects[o]->activate();
-			if (++cnt == num) break;
+			obj->activate();
+			if (++cnt == num) return;
 		}
 	}
 }
@@ -342,27 +333,23 @@ void setGroundColour()
 	{
 	case 1:
 	case 2:
-		ground_colour = KHAKI;
+		ground_colour = COL_KHAKI;
 		break;
-
 	case 3:
 	case 4:
-		ground_colour = DARK_GREEN;
+		ground_colour = COL_DARK_GREEN;
 		break;
-
 	case 5:
 	case 6:
-		ground_colour = STEEL_BLUE;
+		ground_colour = COL_STEEL_BLUE;
 		break;
-
 	case 7:
 	case 8:
-		ground_colour = DARK_MAUVE;
+		ground_colour = COL_DARK_MAUVE;
 		break;
-
 	case 9:
 	case 0:
-		ground_colour = DARK_RED;
+		ground_colour = COL_DARK_RED;
 	}
 }
 

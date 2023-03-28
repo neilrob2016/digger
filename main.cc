@@ -3,7 +3,7 @@
 
  A DigDug / Mr Do 1980s style arcade game for X Windows.
 
- Copyright (C) Neil Robertson 2011-2016
+ Copyright (C) Neil Robertson 2011-2023
  *****************************************************************************/
 
 #define MAINFILE
@@ -113,7 +113,7 @@ void parseCmdLine(int argc, char **argv)
 		{
 		case OPT_VER:
 			puts("-=[ DIGGER ]=-\n");
-			puts("Copyright (C) Neil Robertson 2011-2016\n");
+			puts(COPYRIGHT);
 			printf("Version     : %s\nBuild date  : %s\nSound system: ",
 				VERSION,BUILD_DATE);
 #ifdef SOUND
@@ -544,22 +544,22 @@ void init()
 	attract_enemy[3] = new cl_spiky;
 
 	// Text object creation
-	text_digger = new cl_text(cl_text::DIGGER);
-	text_s_to_start = new cl_text(cl_text::S_TO_START);
-	text_copyright = new cl_text(cl_text::COPYRIGHT);
-	text_level_start = new cl_text(cl_text::LEVEL_START);
-	text_ready = new cl_text(cl_text::READY);
-	text_paused = new cl_text(cl_text::PAUSED);
-	text_game_over = new cl_text(cl_text::GAME_OVER);
-	text_invisibility_powerup = new cl_text(cl_text::INVISIBILITY_POWERUP);
-	text_superball_powerup = new cl_text(cl_text::SUPERBALL_POWERUP);
-	text_freeze_powerup = new cl_text(cl_text::FREEZE_POWERUP);
-	text_new_high_score = new cl_text(cl_text::NEW_HIGH_SCORE);
-	text_bonus_life = new cl_text(cl_text::BONUS_LIFE);
-	text_got_spiky = new cl_text(cl_text::GOT_SPIKY);
+	text_digger = new cl_text(cl_text::TXT_DIGGER);
+	text_s_to_start = new cl_text(cl_text::TXT_S_TO_START);
+	text_copyright = new cl_text(cl_text::TXT_COPYRIGHT);
+	text_level_start = new cl_text(cl_text::TXT_LEVEL_START);
+	text_ready = new cl_text(cl_text::TXT_READY);
+	text_paused = new cl_text(cl_text::TXT_PAUSED);
+	text_game_over = new cl_text(cl_text::TXT_GAME_OVER);
+	text_invisibility_powerup = new cl_text(cl_text::TXT_INVISIBILITY_POWERUP);
+	text_superball_powerup = new cl_text(cl_text::TXT_SUPERBALL_POWERUP);
+	text_freeze_powerup = new cl_text(cl_text::TXT_FREEZE_POWERUP);
+	text_new_high_score = new cl_text(cl_text::TXT_NEW_HIGH_SCORE);
+	text_bonus_life = new cl_text(cl_text::TXT_BONUS_LIFE);
+	text_got_spiky = new cl_text(cl_text::TXT_GOT_SPIKY);
 
 	for(i=0;i < NUM_BONUS_SCORES;++i)
-		text_bonus_score[i] = new cl_text(cl_text::BONUS_SCORE);
+		text_bonus_score[i] = new cl_text(cl_text::TXT_BONUS_SCORE);
 
 	// Miscellanious
 	high_score = 10000;
@@ -656,7 +656,7 @@ void mainloop()
 				setGroundColour();
 				setGameStage(GAME_STAGE_LEVEL_START);
 			}
-			else ground_colour = (game_stage_cnt * 2) % GREEN2;
+			else ground_colour = (game_stage_cnt * 2) % COL_GREEN2;
 			break;
 				
 		case GAME_STAGE_PLAYER_DIED:
@@ -869,14 +869,14 @@ void run()
 	}
 
 	// Run objects
-	FOR_ALL_OBJECTS(o)
-		if (objects[o]->stage != STAGE_INACTIVE) objects[o]->run();
+	for(auto obj: objects) if (obj->stage != STAGE_INACTIVE) obj->run();
 
 	// Check for collions in a seperate loop so all objects have already
 	// run.
 	for(o=0;o < MAX_OBJECTS-1;++o)
 	{
-		switch(objects[o]->stage)
+		cl_object *obj1 = objects[o];
+		switch(obj1->stage)
 		{
 		case STAGE_RUN:
 		case STAGE_WOBBLE:
@@ -890,7 +890,8 @@ void run()
 
 		for(p=o+1;p < MAX_OBJECTS;++p)
 		{
-			switch(objects[p]->stage)
+			cl_object *obj2 = objects[p];
+			switch(obj2->stage)
 			{
 			case STAGE_RUN:
 			case STAGE_WOBBLE:
@@ -898,15 +899,15 @@ void run()
 			case STAGE_BEING_EATEN:
 				// Wurmal is special case - must always use its
 				// overloaded version of function
-				if (objects[p]->type == TYPE_WURMAL)
-					dist = objects[p]->overlapDist(objects[o]);
+				if (obj2->type == TYPE_WURMAL)
+					dist = obj2->overlapDist(obj1);
 				else
-					dist = objects[o]->overlapDist(objects[p]);
+					dist = obj1->overlapDist(obj2);
 
 				if (dist)
 				{
-					objects[o]->haveCollided(objects[p],dist);
-					objects[p]->haveCollided(objects[o],dist);
+					obj1->haveCollided(obj2,dist);
+					obj2->haveCollided(obj1,dist);
 				}
 				break;
 

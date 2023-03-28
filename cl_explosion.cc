@@ -70,30 +70,30 @@ void cl_explosion::activate()
 	switch(owner->type)
 	{
 	case TYPE_PLAYER:
-		col = YELLOW;
+		col = COL_YELLOW;
 		size = 20;
 		col_add = -0.25;
 		break;
 
 	case TYPE_BALL:
-		col = GREEN;
+		col = COL_GREEN;
 		col_add = 1;
 		break;
 
 	case TYPE_SPOOKY:
-		col = TURQUOISE;
+		col = COL_TURQUOISE;
 		col_add = 1;
 		break;
 
 	case TYPE_GRUBBLE:
 	case TYPE_SPIKY:
-		col = PURPLE;
+		col = COL_PURPLE;
 		col_add = 0.5;
 		size = 15;
 		break;
 
 	case TYPE_WURMAL:
-		col = GREEN;
+		col = COL_GREEN;
 		size = 20;
 		col_add = 0.5;
 		break;
@@ -174,16 +174,16 @@ void cl_explosion::runAndDraw()
 	switch(owner->type)
 	{
 	case TYPE_SPOOKY:
-		if (col == BLUE)
+		if (col == COL_BLUE)
 		{
-			col = BLUE2;
+			col = COL_BLUE2;
 			col_add = -1;
 		}
 		break;
 
 	case TYPE_PLAYER:
 		// Go from red to black
-		if (col <= RED) col = RED2;
+		if (col <= COL_RED) col = COL_RED2;
 		break;
 
 	default:
